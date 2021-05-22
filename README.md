@@ -32,4 +32,8 @@ variable in simple_switch_suricata.py
 
 #Run RYU
 sudo ryu-manager --verbose ryu/ryu/app/simple_switch_suricata.py
+
+#Run Suricata
+sudo suricata -c /etc/suricata/suricata.yaml -i s1-suricata
+
 ```
