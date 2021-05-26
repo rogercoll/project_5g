@@ -37,3 +37,8 @@ sudo ryu-manager --verbose ryu/ryu/app/simple_switch_suricata.py
 sudo suricata -c /etc/suricata/suricata.yaml -i s1-suricata
 
 ```
+ 
+## See alerts
+All suricata alerts will be in: /var/log/suricata/
+
+In files like fast.log or alllogs.json
