@@ -22,7 +22,7 @@ sudo ip link set s1-suricata up
 
 
 #Run mininet
-sudo mn --topo single,2 --mac --controller remote --switch ovsk
+sudo python2 Topos/auto_simple1.py 
 
 #Add port to switch
 sudo ovs-vsctl add-port s1 s1-suricata
