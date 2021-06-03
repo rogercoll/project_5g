@@ -85,8 +85,7 @@ outputs:
       filetype: unix_stream
       filename: /tmp/mysocket
       types:
-        - stats:
-           threads: yes
+        - alert:
   - eve-log:
       enabled: yes
       filetype: unix_stream
@@ -1687,7 +1686,7 @@ default-rule-path: /etc/suricata/rules
 
 rule-files:
   - detect-dos.rules
-
+  - tmp.rules
 ##
 ## Auxiliary configuration files.
 ##

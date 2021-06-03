@@ -28,12 +28,12 @@ import _thread
 import json
 from netaddr import *
 
-ips = {'10.0.0.1': '00:00:00:00:00:01', '10.0.0.2': '00:00:00:00:00:02'}
+ips = {'10.0.0.1': '00:00:00:00:00:01', '10.0.0.2': '00:00:00:00:00:02', '10.0.0.3': '00:00:00:00:00:03', '10.0.0.4': '00:00:00:00:00:04', '10.0.0.5': '00:00:00:00:00:05'}
 
 class SimpleSwitch12(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_2.OFP_VERSION]
     alerts = []
-    suricata_port = 3
+    suricata_port = 5
 
     def __init__(self, *args, **kwargs):
         super(SimpleSwitch12, self).__init__(*args, **kwargs)
@@ -63,19 +63,19 @@ class SimpleSwitch12(app_manager.RyuApp):
                 try:
                     y = json.loads(datagram)
                     self.alerts.append(y)
+                    print(y)
                     print(y['alert']['signature'])
                     print(len(self.flows))
-                    if len(self.alerts) > 1:
-                        if 'alert' in y:
-                            if y['alert']['signature'] == 'LOCAL_TCP_DOS':
-                                print("Just here")
-                                for dp in self.datapaths.values():
-                                    print(len(self.datapaths))
-                                    print(y['dest_ip'])
-                                    dst_ip = EUI(ips[y['dest_ip']]) 
-                                    src_ip = EUI(ips[y['src_ip']])
-                                    print("Going to Add flow...")
-                                    self.add_flow(dp, 1, dst_ip,src_ip,[], 10)
+                    if 'alert' in y:
+                        if y['alert']['signature'] == 'LOCAL_TCP_DOS':
+                            print("DOS attack detected, mitigating it...")
+                            for dp in self.datapaths.values():
+                                print(len(self.datapaths))
+                                print(y['dest_ip'])
+                                dst_ip = EUI(ips[y['dest_ip']]) 
+                                src_ip = EUI(ips[y['src_ip']])
+                                print("Going to Add flow to drop incomping packets from ", y['src_ip'])
+                                self.add_flow(dp, 1, dst_ip,src_ip,[], 10)
                 except Exception as e:
                     print(e)
 
@@ -134,7 +134,6 @@ class SimpleSwitch12(app_manager.RyuApp):
         dpid = datapath.id
         self.mac_to_port.setdefault(dpid, {})
 
-        self.logger.info("packet in %s %s %s %s", dpid, src, dst, in_port)
         # learn a mac address to avoid FLOOD next time.
         self.mac_to_port[dpid][src] = in_port
 
